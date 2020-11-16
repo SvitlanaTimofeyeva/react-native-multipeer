@@ -77,7 +77,7 @@ RCT_EXPORT_METHOD(disconnect:(RCTResponseSenderBlock)callback) {
   NSError *error = nil;
   NSMutableArray *peers = [NSMutableArray array];
   for (NSString *peerUUID in recipients) {
-    [peers addObject:[self.peers valueForKey:peerUUID]];
+    [peers addObject:[self.connectedPeers valueForKey:peerUUID]];
   }
   NSData *jsonData = [NSJSONSerialization dataWithJSONObject:data options:0 error:&error];
   [self.session sendData:jsonData toPeers:peers withMode:MCSessionSendDataReliable error:&error];
@@ -184,11 +184,11 @@ RCT_EXPORT_METHOD(disconnect:(RCTResponseSenderBlock)callback) {
   NSError *error = nil;
   id object = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
   NSDictionary *parsedJSON = [NSDictionary dictionary];
-  
+
   if([object isKindOfClass:[NSDictionary class]]) {
     parsedJSON = object;
   }
-  
+
   [self.bridge.eventDispatcher sendDeviceEventWithName:@"RCTMultipeerConnectivityDataReceived"
                                body:@{
                                  @"sender": @{
@@ -210,7 +210,7 @@ RCT_EXPORT_METHOD(disconnect:(RCTResponseSenderBlock)callback) {
 //- (void)session:(MCSession *)session
 //didStartReceivingResourceWithName:(NSString *)resourceName fromPeer:(MCPeerID *)peerID withProgress:(NSProgress *)progress
 //{
-//  
+//
 //}
 
 
