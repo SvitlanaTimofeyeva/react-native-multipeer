@@ -40,8 +40,15 @@ export default class MultipeerConnection extends EventEmitter {
       'RCTMultipeerConnectivityPeerConnected',
       ((event) => {
         try {
-          this._peers[event.peer.id].emit('connected');
-          this._connectedPeers[event.peer.id] = this._peers[event.peer.id];
+          if (event && event.peer && this._peers[event.peer.id]) {
+            this._peers[event.peer.id].emit('connected');
+            this._connectedPeers[event.peer.id] = this._peers[event.peer.id];
+          } else {
+            if (event && event.peer) {
+              this._peers[event.peer.id] = event.peer;
+              this._connectedPeers[event.peer.id] = event.peer;
+            }
+          }
           this.emit('peerConnected', event);
         } catch(err) {
           console.log(err);
@@ -63,8 +70,10 @@ export default class MultipeerConnection extends EventEmitter {
       'RCTMultipeerConnectivityPeerDisconnected',
       ((event) => {
         try {
-          this._peers[event.peer.id].emit('disconnected');
-          delete this._connectedPeers[event.peer.id];
+          if (event && event.peer && this._peers[event.peer.id]) {
+            this._peers[event.peer.id].emit('disconnected');
+            delete this._connectedPeers[event.peer.id];
+          }
           this.emit('peerDisconnected', event);
         } catch(err) {
           console.log(err);
